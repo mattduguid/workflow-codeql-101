@@ -50,11 +50,11 @@ jobs:
           go list ./...  # ✅ Ensures Go recognizes the module
           go env
 
-      - name: Build the Go Project
+      - name: **Compile Go with Debug Information (CodeQL Requirement)**
         run: |
           cd golang-example
           mkdir -p build  # ✅ Ensure a build directory exists
-          go build -o build/main .  # ✅ Compile the Go code
+          go build -gcflags=all="-N -l" -o build/main .  # ✅ Compile Go with debug symbols
           ls -R build  # ✅ Verify compiled files exist
 
       - name: Debug - Check Build Files
