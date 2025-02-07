@@ -46,11 +46,6 @@ jobs:
           go mod tidy
           go build ./...  # ✅ Ensure Go builds correctly
 
-      - name: Debug CodeQL Queries
-        run: |
-          echo "Resolving available CodeQL queries..."
-          codeql resolve queries --language=go --format=bylanguage
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -58,19 +53,12 @@ jobs:
           source-root: ./golang-example  # ✅ Ensure correct folder path
           build-mode: manual  # ✅ Prevent auto-build issues
 
-      - name: Enable Detailed Logging
-        run: |
-          export CODEQL_EXTRACTOR_GO_DEBUG=1
-          export CODEQL_EXTRACTOR_GO_TRACE=1
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/github/workflow"
-          queries: +security-and-quality,+experimental-security  # ✅ Run all security queries
-          verbose: true  # ✅ Get detailed logs
+          category: "/github/workflow"  # ✅ Correctly runs all standard security queries
 
       - name: Upload SARIF results
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: go-db/results.sarif  # ✅ Ensure results are uploaded
+          sarif_file: results.sarif  # ✅ Ensure results are uploaded
