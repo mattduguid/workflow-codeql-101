@@ -40,10 +40,15 @@ jobs:
       - name: Ensure Go Dependencies Exist
         run: |
           cd golang-example
-          rm -f go.sum  # ✅ Remove old go.sum to force regeneration
-          go mod tidy  # ✅ Generate a fresh go.sum file
+          go mod tidy  # ✅ Ensure dependencies are properly installed
           go mod verify  # ✅ Validate module files
-          ls -l go.sum  # ✅ Ensure go.sum exists
+          ls -l go.sum  # ✅ Confirm go.sum exists
+
+      - name: Force Go Module Recognition
+        run: |
+          cd golang-example
+          go list ./...  # ✅ Ensures Go recognizes the module
+          go env
 
       - name: Build the Go Project
         run: |
@@ -51,6 +56,11 @@ jobs:
           mkdir -p build  # ✅ Ensure a build directory exists
           go build -o build/main .  # ✅ Compile the Go code
           ls -R build  # ✅ Verify compiled files exist
+
+      - name: Debug - Check Build Files
+        run: |
+          echo "🔍 Verifying compiled Go files exist..."
+          ls -l golang-example/build/
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
