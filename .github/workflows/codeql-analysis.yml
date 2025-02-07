@@ -43,10 +43,16 @@ jobs:
       - name: Install Go Dependencies
         run: |
           cd golang-example
-          go mod tidy  # ✅ Install dependencies
-          go mod verify  # ✅ Check if dependencies are valid
-          go build -v ./...  # ✅ Ensure Go compiles properly
-          ls -l go.sum  # ✅ Verify that go.sum exists
+          go mod tidy  # ✅ Ensure dependencies are installed
+          go mod verify  # ✅ Validate module files
+          ls -l go.sum  # ✅ Confirm that go.sum exists
+
+      - name: **Build the Go Project (Critical Step)**
+        run: |
+          cd golang-example
+          mkdir -p build  # ✅ Ensure a build directory exists
+          go build -o build/main .  # ✅ Compile the Go code
+          ls -R build  # ✅ Verify compiled files exist
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
