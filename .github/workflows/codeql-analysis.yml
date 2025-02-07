@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # ✅ Ensure all files are checked out
+          fetch-depth: 0  # ✅ Ensures all files are checked out
 
       - name: Debug - List Files
         run: |
@@ -37,23 +37,13 @@ jobs:
         with:
           go-version: '1.21'  # ✅ Ensure latest Go version
 
-      - name: Verify Go Environment
-        run: |
-          go version
-          go env
-
-      - name: Debug - Verify Go Module Files
-        run: |
-          echo "🔍 Checking if go.mod and go.sum exist inside GitHub runner..."
-          [ -f golang-example/go.mod ] && echo "✅ go.mod exists" || echo "❌ go.mod MISSING"
-          [ -f golang-example/go.sum ] && echo "✅ go.sum exists" || echo "❌ go.sum MISSING"
-          ls -l golang-example
-
-      - name: Install Go Dependencies
+      - name: Ensure Go Dependencies Exist
         run: |
           cd golang-example
-          go mod tidy  # ✅ Ensure dependencies are installed
+          rm -f go.sum  # ✅ Remove old go.sum to force regeneration
+          go mod tidy  # ✅ Generate a fresh go.sum file
           go mod verify  # ✅ Validate module files
+          ls -l go.sum  # ✅ Ensure go.sum exists
 
       - name: Build the Go Project
         run: |
