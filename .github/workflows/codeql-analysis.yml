@@ -25,10 +25,12 @@ jobs:
 
       - name: Debug - List Files
         run: |
-          echo "Listing all files in repo..."
+          echo "🔍 Listing all files in repo..."
           ls -R
-          echo "Checking Go files..."
+          echo "🔍 Checking Go files..."
           find . -name "*.go"
+          echo "🔍 Checking go.sum file..."
+          find . -name "go.sum"
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -40,14 +42,20 @@ jobs:
           go version
           go env
 
+      - name: Debug - Verify Go Module Files
+        run: |
+          echo "🔍 Checking if go.mod and go.sum exist inside GitHub runner..."
+          [ -f golang-example/go.mod ] && echo "✅ go.mod exists" || echo "❌ go.mod MISSING"
+          [ -f golang-example/go.sum ] && echo "✅ go.sum exists" || echo "❌ go.sum MISSING"
+          ls -l golang-example
+
       - name: Install Go Dependencies
         run: |
           cd golang-example
           go mod tidy  # ✅ Ensure dependencies are installed
           go mod verify  # ✅ Validate module files
-          ls -l go.sum  # ✅ Confirm that go.sum exists
 
-      - name: Build the Go Project (Critical Step)
+      - name: Build the Go Project
         run: |
           cd golang-example
           mkdir -p build  # ✅ Ensure a build directory exists
@@ -61,12 +69,7 @@ jobs:
           source-root: ./golang-example  # ✅ Ensure correct folder path
           build-mode: manual  # ✅ Prevent auto-build issues
 
-      - name: Run CodeQL Analysis
+      - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: "/github/workflow"  # ✅ Runs all default security queries
-
-      - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif  # ✅ Ensure results are uploaded
