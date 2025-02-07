@@ -61,7 +61,7 @@ jobs:
           source-root: ./golang-example  # ✅ Ensure correct folder path
           build-mode: manual  # ✅ Prevent auto-build issues
 
-      - name: Perform CodeQL Analysis
+      - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: "/github/workflow"  # ✅ Runs all default security queries
