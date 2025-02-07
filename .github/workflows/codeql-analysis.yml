@@ -21,16 +21,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # ✅ Ensure all files are fetched
+          fetch-depth: 0  # ✅ Ensure all files are pulled
 
       - name: Debug - List Files
-        run: ls -R
+        run: ls -R  # ✅ Debugging step to verify file visibility
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: go
-          source-root: ./golang-example
+          source-root: ./golang-example  # ✅ Correct folder
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
