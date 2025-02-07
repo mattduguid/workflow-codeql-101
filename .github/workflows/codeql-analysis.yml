@@ -21,16 +21,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # ✅ Ensure all files are pulled
+          fetch-depth: 0  # ✅ Ensure all files are checked out
 
       - name: Debug - List Files
-        run: ls -R  # ✅ Debugging step to verify file visibility
+        run: |
+          echo "Listing all files in repo..."
+          ls -R
+          echo "Checking Go files..."
+          find . -name "*.go"
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'  # ✅ Use latest Go version
+
+      - name: Initialize Go Modules
+        run: |
+          cd golang-example
+          go mod tidy
+          go build ./...  # ✅ Force build to ensure CodeQL detects Go
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: go
-          source-root: ./golang-example  # ✅ Correct folder
+          source-root: ./golang-example  # ✅ Ensure correct folder path
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
