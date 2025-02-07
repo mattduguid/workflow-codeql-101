@@ -33,27 +33,23 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'  # ✅ Use latest Go version
+          go-version: '1.21'  # ✅ Use the latest stable Go version
 
-      - name: Ensure Go Dependencies Exist
+      - name: Initialize Go Modules
         run: |
           cd golang-example
-          go mod tidy  # ✅ Ensure dependencies are installed
-          go mod verify  # ✅ Validate module files
-          ls -l go.sum  # ✅ Confirm go.sum exists
-
-      - name: Build the Go Project
-        run: |
-          cd golang-example
-          go build ./...  # ✅ Compile the Go code
-          echo "🔍 Go build completed!"
+          go mod tidy
+          go get -v ./...  # ✅ Ensure all dependencies are fetched
+          go build ./...  # ✅ Force build to ensure CodeQL detects Go
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: go
-          source-root: ./golang-example  # ✅ Ensure correct folder path
-          build-mode: manual  # ✅ Prevent CodeQL from auto-building
+          build-mode: autobuild  # ✅ This ensures CodeQL compiles Go code automatically
+
+      - name: Run Autobuild
+        uses: github/codeql-action/autobuild@v3  # ✅ This is the missing step
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
