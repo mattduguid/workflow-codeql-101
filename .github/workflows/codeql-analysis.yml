@@ -40,11 +40,13 @@ jobs:
           go version
           go env
 
-      - name: Initialize Go Modules
+      - name: Install Go Dependencies
         run: |
           cd golang-example
-          go mod tidy
-          go build ./...  # ✅ Ensure Go builds correctly
+          go mod tidy  # ✅ Install dependencies
+          go mod verify  # ✅ Check if dependencies are valid
+          go build -v ./...  # ✅ Ensure Go compiles properly
+          ls -l go.sum  # ✅ Verify that go.sum exists
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -56,7 +58,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/github/workflow"  # ✅ Correctly runs all standard security queries
+          category: "/github/workflow"  # ✅ Runs all default security queries
 
       - name: Upload SARIF results
         uses: github/codeql-action/upload-sarif@v3
