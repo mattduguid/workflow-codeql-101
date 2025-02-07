@@ -47,7 +47,7 @@ jobs:
           go mod verify  # ✅ Validate module files
           ls -l go.sum  # ✅ Confirm that go.sum exists
 
-      - name: **Build the Go Project (Critical Step)**
+      - name: Build the Go Project (Critical Step)
         run: |
           cd golang-example
           mkdir -p build  # ✅ Ensure a build directory exists
