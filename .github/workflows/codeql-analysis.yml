@@ -22,13 +22,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # ✅ Ensure all files are checked out
+          submodules: true  # ✅ Ensure all submodules are included
 
-      - name: Debug - List Files
+      - name: Verify Go Version & Modules
         run: |
-          echo "Listing all files in repo..."
-          ls -R
-          echo "Checking Go files..."
-          find . -name "*.go"
+          go version
+          go env
+          cd golang-example
+          go list ./...
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -46,8 +47,20 @@ jobs:
         with:
           languages: go
           source-root: ./golang-example  # ✅ Ensure correct folder path
+          build-mode: manual  # ✅ Prevent auto-build issues
+
+      - name: Manually Build CodeQL Database
+        run: |
+          codeql database create go-db --language=go --source-root=./golang-example
+
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: "/github/workflow"
+  
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: go-db/results.sarif  # ✅ Force SARIF upload
+  
